@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Elite Dangerous Planet Calculator</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+    </head>
+    <body>
+        <div class="jumbotron text-center">
+            <h1>Elite Dangerous Planet Calculator</h1>
+            <p>Here you can calculate the reward of exploring a planet.</p> 
+            <p><em> <small> This is not official and only based on expectations!</small></em></p> 
+            <a class="btn btn-success" href="EliteCalcImpressum.html">Impressum</a>
+        </div>
+
+        <div class="container">
+                <form>
+
+                  <div class="form-group row">
+                    <label for="masse" class="col-sm-2 col-form-label">Mass:</label>
+                    <div class="col-sm-10">
+                      <input type="text" class="form-control" id="masse" placeholder="eg. 587.0881 or 0.54430">
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <label for="art" class="col-sm-2 col-form-label">Type:</label>
+                    <div class="col-sm-10">
+                        <select id="art"  class="form-control" name="planetType">
+                                <option value="64831">WW or ELW</option>
+                                <option value="96932">AW</option>
+                                <option value="21790">MR</option>
+                                <option value="1656">GG1</option>
+                                <option value="9654">GG2 or HMC</option>
+                                <option value="300">Everything else</option>
+                                <option value="100677">GG2 or HMC terr.</option>
+                                <option value="116295">WW or ELW terr.</option>
+                                <option value="93328">Everything else terr.</option>
+                        </select>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <label class="col-sm-2">First Discoverer?</label>
+                    <div class="col-sm-10">
+                      <div class="form-check">
+                        <label class="form-check-label">
+                          <input class="form-check-input" type="checkbox"  id="firstDiscovered" checked="checked"> 
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                        <label class="col-sm-2">First Mapper?</label>
+                        <div class="col-sm-10">
+                          <div class="form-check">
+                            <label class="form-check-label">
+                              <input class="form-check-input" type="checkbox"  id="firstMapped" checked="checked"> 
+                            </label>
+                          </div>
+                        </div>
+                      </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2">Did you map?</label>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"  id="mapped" checked="checked"> 
+                            </label>
+                            </div>
+                        </div>
+                        </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2">Scan Bonus achieved?</label>
+                        <div class="col-sm-10">
+                            <div class="form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"  id="scanBonus" checked="checked"> 
+                            </label>
+                            </div>
+                        </div>
+                        </div>
+
+                  <div class="form-group row">
+                    <div class="offset-sm-10 col-sm-12 ">
+                      <input type="button" id="submitCalc" class="btn btn-warning btn-block " value="Calculate">
+                    </div>
+                  </div>
+                </form>
+
+                <div class="panel panel-warning text-center font-weight-bold">
+                    <div class="panel-body"> <h3><b id="result" > 0 </b><b> Credits</b> </h3></div>
+                </div>
+                <div class="text-center font-weight-bold">
+                        <div> <p> <em> Thanks "MattG" for the calculation values. You can find his post <a href="https://forums.frontier.co.uk/threads/exploration-value-formulae.232000/">here</a>! </em> </p></div>
+                </div>
+            </div>    
+    </body>
+
+    <script type="text/javascript">
+    
+        document.getElementById("submitCalc").onclick = doFunction;
+
+        function doFunction(){
+            var q = 0.56591828;
+            var mappingMultiplier = 1;
+
+            var k = parseInt(document.getElementById("art").value);
+            var mass = parseInt(document.getElementById("masse").value);
+            var isFirstDicoverer = document.getElementById("firstDiscovered").checked;
+            var isMapped = document.getElementById("mapped").checked;
+            var isFirstMapped = document.getElementById("firstMapped").checked;
+            var withEfficiencyBonus = document.getElementById("scanBonus").checked;
+                      
+            if(isMapped){
+                if(isFirstDicoverer && isFirstMapped){
+                    mappingMultiplier = 3.699622554;
+                }
+                else if(isFirstMapped){
+                    mappingMultiplier = 8.0956;
+                }
+                else{
+                    mappingMultiplier = 3.3333333333;
+                }
+                                
+                mappingMultiplier *= (withEfficiencyBonus) ? 1.25 : 1;
+            }
+
+            
+            var erg = Math.max(500, (k + k * q * Math.pow(mass,0.2)) * mappingMultiplier);
+            erg *= (isFirstDicoverer) ? 2.6 : 1;
+            var result = Math.round(erg);
+
+            document.getElementById("result").innerHTML = result.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+    </script>
+</html>
